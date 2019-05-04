@@ -1,0 +1,89 @@
+---
+title: "Geografías"
+author: "Manuel Toral"
+date: "April 27, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Librerías
+
+```{r}
+library(sf)
+library(tidyverse)
+library(raster)
+library(spData)
+```
+
+# Cargar los mapas
+
+```{r}
+file <- "gadm36_MEX_shp/gadm36_MEX_1.shp"
+
+mapa <- st_read(file, quiet=TRUE)
+
+class(mapa)
+glimpse(mapa)
+
+```
+
+```{r}
+mapa %>% 
+  ggplot() +
+  geom_sf(aes(fill=NAME_1), color="white") +
+  guides(fill=FALSE) +
+  geom_sf_label(aes(label=NAME_1), size=2) +
+  coord_sf(datum = NA) +
+  theme(line = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.background = element_blank()) +
+  viridis::scale_fill_viridis(discrete = T)
+  
+```
+
+```{r}
+set.seed(110590)
+
+numeros <- tibble(NAME_1 = unique(mapa$NAME_1),
+       n = runif(32))
+
+numeros
+```
+
+# Merge 
+
+```{r}
+joined <- left_join(mapa, numeros)
+```
+
+```{r}
+joined %>% 
+  ggplot() +
+  geom_sf(aes(fill=n))
+```
+
+```{r}
+joined %>% 
+  filter(NAME_1 == "Jalisco") %>% 
+  ggplot() +
+  geom_sf(data=joined, fill="black") +
+  geom_sf(fill="blue") 
+
+```
+
+
+## Ahora dos mapas
+
+### Con cuidado!
+
+#### Algunos mapas son muy grandes
+
+
+
+
+
+
